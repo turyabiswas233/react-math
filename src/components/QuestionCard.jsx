@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Latex from "react-latex";
 
 function QuestionCard({ sId, question, optionsList, answer }) {
   const [stdAnswer, setAnswer] = useState({ ans: "", oid: -1 });
@@ -8,12 +9,14 @@ function QuestionCard({ sId, question, optionsList, answer }) {
     }
   }
   return (
-    <div className="mx-auto w-auto text-black ring-2 ring-blue-200 bg-white shadow-lg shadow-blue-300/40 rounded-lg backdrop-blur-md p-3">
+    <div className="w-auto text-black ring-2 ring-blue-200 bg-white shadow-lg shadow-blue-300/40 rounded-lg backdrop-blur-md p-3 md:col-span-2">
       {/* question title */}
       <div id="question_header" className="text-xl my-2 p-2 font-semibold">
         <p>
           <span>{sId || "1"}. </span>
-          <span>{question || "What is lorem ipsum?"}</span>
+          <span>
+            <Latex children={`${question || "What is lorem ipsum?"}`} />
+          </span>
         </p>
       </div>
       {/* question options */}
@@ -38,7 +41,9 @@ function QuestionCard({ sId, question, optionsList, answer }) {
                 <span className="text-base w-4 h-4 flex justify-center items-center p-3 ring-2 ring-blue-500 rounded-full transition">
                   {optId}
                 </span>
-                <span className="font-semibold">{opt}</span>
+                <span className="font-semibold">
+                  <Latex children={`$${opt}$`} />
+                </span>
               </p>
             </div>
           );
@@ -51,7 +56,7 @@ function QuestionCard({ sId, question, optionsList, answer }) {
             stdAnswer.ans.length === 0 && "hidden"
           }`}
         >
-          Answer: {answer}
+          Answer: <Latex children={`$${answer}$`} />
         </p>
       </div>
     </div>

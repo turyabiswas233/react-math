@@ -1,25 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Input from "../../Input";
 import { FaImage } from "react-icons/fa";
 import MathTemplate from "./MathTemplate";
+import LatexHint from "./LatexHint";
+import QuestionCard from "../../../QuestionCard";
 
-const qLis = [
-  {
-    ques: "What is your country?",
-    optiList: ["Bangladesh", "Australia", "India", "Pakistan"],
-    ans: "Bangladesh",
-  },
-  {
-    ques: "What is your mother tongue?",
-    optiList: ["Bangla", "English", "Hindi", "Arabic"],
-    ans: "Bangla",
-  },
-  {
-    ques: "Which class do you read in?",
-    optiList: ["8", "9", "11", "12"],
-    ans: "11",
-  },
-];
 const subList = [
   {
     name: "Physics 1st",
@@ -67,13 +52,13 @@ const exmType = [
 function Question() {
   const [questionInfo, setQuestion] = useState({
     qt: "",
-    opt: [""],
-    ans: "",
+    ans: "2",
     subject: "",
     chapter: "",
   });
+  const [qLis, setqList] = useState([]);
+  const [options, setOptions] = useState(["", "", "", ""]);
   const [q_img, setimg] = useState(null);
-
   function handleInfo(e) {
     if (e.target.name?.includes("option"));
     else setQuestion((pre) => ({ ...pre, [e.target.name]: e.target.value }));
@@ -82,19 +67,25 @@ function Question() {
     <div className="dm-sans-normal overflow-x-hidden p-10 w-full">
       <h2 className="text-4xl xl:text-5xl dm-sans-medium">Question Panel</h2>
       <div className="main">
-        <div className="card shadow-md max-w-7xl mx-auto">
+        <div className="rounded-lg my-5 shadow-md max-w-7xl mx-auto lg:flex">
           <form
             className="card-body"
             onSubmit={(e) => {
               e.preventDefault();
-              console.log(questionInfo);
+              setqList((pre) => [
+                ...pre,
+                {
+                  ques: questionInfo.qt,
+                  optiList: options,
+                  ans: questionInfo.ans,
+                  image: q_img,
+                },
+              ]);
             }}
           >
-            <h2 className="text-left card-title text-3xl">
-              Create a question <button className="btn">Hint</button>
-            </h2>
+            <h2 className="text-left card-title text-3xl">Create a question</h2>
             <div className="main">
-              <div className="quest grid grid-cols-1 items-start pb-10 lg:grid-cols-2 gap-10">
+              <div className="quest flex flex-col gap-4 pb-10">
                 <Input
                   title={"Question"}
                   name={"qt"}
@@ -103,58 +94,92 @@ function Question() {
                   setValue={handleInfo}
                   placeholder={"বাংলাদেশের জাতীয় ফলের নাম কি?"}
                 />
-                <MathTemplate tex={`${questionInfo.qt}`} />
-              </div>
-              <div className="others">
-                <div className="upload-img w-fit lg:w-1/2 px-2 py-5 items-center justify-center bg-blue-100 border-2 border-blue-500 rounded-xl border-double grid mx-auto">
-                  {q_img && (
-                    <img
-                      className="w-auto max-w-md object-contain aspect-video rounded-lg"
-                      src={URL.createObjectURL(q_img)}
-                      width={600}
-                      height={600}
-                    />
-                  )}
-                  {q_img && (
-                    <div className="caption-bottom mt-4">
-                      <p>SIZE: {(q_img?.size / 1024)?.toFixed(2)} KB</p>
-                    </div>
-                  )}
+                {(q_img || questionInfo.qt) && (
+                  <MathTemplate
+                    tex={`${questionInfo.qt}`}
+                    image={q_img}
+                    options={options}
+                  />
+                )}
+                {/* question image */}
+                <div className="bg-blue-200/80 ring ring-blue-400 rounded-full overflow-hidden h-8 flex items-center gap-4">
                   <label
-                    htmlFor="ques_img"
-                    className="text-xl text-blue-500 mt-10"
+                    className="bg-blue-600 text-blue-200 font-semibold px-5 flex items-center gap-2 h-full w-fit"
+                    htmlFor="q_img"
                   >
-                    {!q_img ? (
-                      <FaImage className="mx-auto" size={100} color="#3366ffaa" />
-                    ) : (
-                      <FaImage
-                        className="mx-auto inline-flex mr-2"
-                        size={40}
-                        color="#3366ffaa"
-                      />
-                    )}
-                    Upload a question
+                    <FaImage /> Choose a file
                   </label>
+                  <p className="overflow-x-hidden whitespace-nowrap text-ellipsis flex-1 text-blue-700 text-xs pr-3">
+                    {q_img?.name || "No File choosen"}
+                  </p>
                   <input
-                    hidden
+                    id="q_img"
                     type="file"
-                    name="ques_img"
-                    id="ques_img"
                     multiple={false}
-                    aria-label="hidden"
+                    accept="image/*"
                     onChange={(e) => setimg(e.target.files[0])}
+                    aria-hidden
+                    hidden
                   />
                 </div>
-                <div className="lg:grid-cols-2 lg:justify-between grid gap-x-5 my-5">
+              </div>
+
+              {/* text info */}
+              {questionInfo.qt !== "" && (
+                <div className="lg:grid-cols-2 lg:justify-between grid gap-x-5 my-5 others border-2 border-blue-600 p-2 rounded-md">
                   <div className="option">
                     <h3 className="stat-title text-black/50 font-bold ">
                       Options
                     </h3>
                     <div className="grid md:grid-cols-2 gap-x-3">
-                      <Input title={"option 1"} placeholder={"কাঁঠাল"} />
-                      <Input title={"option 2"} placeholder={"আম"} />
-                      <Input title={"option 3"} placeholder={"পেঁপে"} />
-                      <Input title={"option 4"} placeholder={"লিচু"} />
+                      <Input
+                        title={"option 1"}
+                        placeholder={"option 1"}
+                        setValue={(e) => {
+                          setOptions((pre) => {
+                            const upOpt = [...pre];
+                            upOpt[0] = e.target.value;
+                            return upOpt;
+                          });
+                        }}
+                        value={options[0]}
+                      />
+                      <Input
+                        title={"option 2"}
+                        placeholder={"option 2"}
+                        setValue={(e) => {
+                          setOptions((pre) => {
+                            const upOpt = [...options];
+                            upOpt[1] = e.target.value;
+                            return upOpt;
+                          });
+                        }}
+                        value={options[1]}
+                      />
+                      <Input
+                        title={"option 3"}
+                        placeholder={"option 3"}
+                        setValue={(e) => {
+                          setOptions((pre) => {
+                            const upOpt = [...options];
+                            upOpt[2] = e.target.value;
+                            return upOpt;
+                          });
+                        }}
+                        value={options[2]}
+                      />
+                      <Input
+                        title={"option 4"}
+                        placeholder={"option 3"}
+                        setValue={(e) => {
+                          setOptions((pre) => {
+                            const upOpt = [...options];
+                            upOpt[3] = e.target.value;
+                            return upOpt;
+                          });
+                        }}
+                        value={options[3]}
+                      />
                     </div>
                   </div>
                   <div className="groupSubject flex flex-col lg:items-center space-y-3">
@@ -233,9 +258,7 @@ function Question() {
                     </div>
                   </div>
                 </div>
-              </div>
-
-
+              )}
             </div>
             <button
               className="btn btn-primary w-full text-lg text-green-900 bg-green-500/70 hover:bg-green-600/70 border-0"
@@ -244,6 +267,24 @@ function Question() {
               Add Question
             </button>
           </form>
+          <LatexHint />
+        </div>
+      </div>
+      <div>
+        <h2 className="text-center py-10 underline text-4xl">
+          Question on student End
+        </h2>
+        <div className="md:grid md:grid-cols-4 gap-2 mx-auto max-w-screen-lg ">
+          {qLis.map((q, id) => (
+            <QuestionCard
+              key={id + "_ques"}
+              question={q.ques}
+              sId={id + 1}
+              optionsList={q.optiList}
+              answer={q.ans}
+              image={q?.image}
+            />
+          ))}
         </div>
       </div>
     </div>
