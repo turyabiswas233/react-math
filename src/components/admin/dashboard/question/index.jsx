@@ -3,7 +3,7 @@ import Input from "../../Input";
 import { FaImage } from "react-icons/fa";
 import MathTemplate from "./MathTemplate";
 import LatexHint from "./LatexHint";
-import QuestionCard from "../../../QuestionCard";
+import QuestionCard from "./Card";
 
 const subList = [
   {
@@ -52,7 +52,7 @@ const exmType = [
 function Question() {
   const [questionInfo, setQuestion] = useState({
     qt: "",
-    ans: "2",
+    ans: "",
     subject: "",
     chapter: "",
   });
@@ -64,10 +64,10 @@ function Question() {
     else setQuestion((pre) => ({ ...pre, [e.target.name]: e.target.value }));
   }
   return (
-    <div className="dm-sans-normal overflow-x-hidden p-10 w-full">
-      <h2 className="text-4xl xl:text-5xl dm-sans-medium">Question Panel</h2>
+    <div className="poppins-regular overflow-x-hidden p-10 w-full">
+      <h2 className="text-4xl xl:text-5xl poppins-semibold">Question Panel</h2>
       <div className="main">
-        <div className="rounded-lg my-5 shadow-md max-w-7xl mx-auto lg:flex">
+        <div className="rounded-lg my-5 shadow-md max-w-7xl mx-auto lg:grid grid-cols-2">
           <form
             className="card-body"
             onSubmit={(e) => {
@@ -83,7 +83,9 @@ function Question() {
               ]);
             }}
           >
-            <h2 className="text-left card-title text-3xl">Create a question</h2>
+            <h2 className="text-left card-title poppins-medium text-3xl">
+              Create a question
+            </h2>
             <div className="main">
               <div className="quest flex flex-col gap-4 pb-10">
                 <Input
@@ -181,6 +183,15 @@ function Question() {
                         value={options[3]}
                       />
                     </div>
+                    <Input
+                      required={true}
+                      title={"Answer"}
+                      placeholder={"Question's Answer"}
+                      id={"ans"}
+                      name={"ans"}
+                      value={questionInfo.ans}
+                      setValue={handleInfo}
+                    />
                   </div>
                   <div className="groupSubject flex flex-col lg:items-center space-y-3">
                     <div className="subjects space-y-1">
@@ -281,7 +292,7 @@ function Question() {
               question={q.ques}
               sId={id + 1}
               optionsList={q.optiList}
-              answer={q.ans}
+              answer={q?.ans || ""}
               image={q?.image}
             />
           ))}

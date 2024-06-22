@@ -115,7 +115,7 @@ function Signin() {
                 </div>
               ))}
           </div>
-          <p className="text-right text-sm text-gray-700/60 dm-sans-normal tracking-tight">
+          <p className="text-right text-sm text-gray-700/60 tracking-tight">
             Not an admin user?{" "}
             <a
               className="text-blue-600 font-medium hover:underline dm-sans-bold"

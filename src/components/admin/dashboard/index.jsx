@@ -27,9 +27,8 @@ function Dashboard() {
   ];
   const [show, setshow] = useState(false);
   const { pathname } = useLocation();
-  console.log(pathname);
   return (
-    <div className="h-svh w-full bg-white text-black dm-sans-normal overflow-x-hidden flex flex-row relative ">
+    <div className="h-svh w-full bg-white text-black poppins-bold overflow-x-hidden flex flex-row relative ">
       <div className="px-1 lg:p-0">
         <button
           className="bg-blue-50 p-4 rounded-md  text-blue-600 z-50 absolute right-6 top-1 my-2 lg:hidden"

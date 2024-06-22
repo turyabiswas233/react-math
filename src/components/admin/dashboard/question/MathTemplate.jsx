@@ -3,14 +3,14 @@ function MathTemplate({ tex, image, options }) {
   console.log(options);
 
   return (
-    <div className="text-xl border-black border-2 p-2 rounded-md m-2 ">
+    <div className="text-xl border-black border-2 p-2 rounded-md m-2 bangla-font">
       {image && (
         <img
           className="mb-5 object-contain w-auto max-w-48 aspect-auto rounded-md bg-pink-600 overflow-hidden"
           src={URL.createObjectURL(image)}
         />
       )}
-      <p className="dm-sans-normal">
+      <p className="poppins-medium">
         <Latex children={tex} />
       </p>
 

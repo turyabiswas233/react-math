@@ -4,87 +4,27 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React</title>
-    <style>
-      .container {
-        --uib-size: 35px;
-        --uib-color: #1670f7;
-        --uib-speed: 0.75s;
-        --uib-bg-opacity: 0.1;
-        height: var(--uib-size);
-        width: var(--uib-size);
-        transform-origin: center;
-        will-change: transform;
-        overflow: visible;
-      }
+    <title>Mock Test</title>
 
-      .car {
-        fill: none;
-        stroke: var(--uib-color);
-        stroke-dasharray: 25, 75;
-        stroke-dashoffset: 0;
-        animation: travel var(--uib-speed) linear infinite;
-        will-change: stroke-dasharray, stroke-dashoffset;
-        transition: stroke 0.5s ease;
-      }
-
-      .track {
-        fill: none;
-        stroke: var(--uib-color);
-        opacity: var(--uib-bg-opacity);
-        transition: stroke 0.5s ease;
-      }
-
-      @keyframes travel {
-        0% {
-          stroke-dashoffset: 0;
-        }
-
-        100% {
-          stroke-dashoffset: -100;
-        }
-      }
-    </style>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap"
-      rel="stylesheet"
-    />
     <link
       href="//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0/katex.min.css"
       rel="stylesheet"
     />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link href="https://fonts.maateen.me/bangla/font.css" rel="stylesheet" />
+
+    <style>
+      @import url("https://fonts.maateen.me/bangla/font.css");
+    </style>
   </head>
   <body>
-    <div
-      id="loader"
-      class="absolute top-0 left-0 w-screen h-screen grid place-items-center bg-white"
-    >
-      <svg class="container" viewBox="0 0 35 35" height="35" width="35">
-        <rect
-          class="track"
-          x="2.5"
-          y="2.5"
-          fill="none"
-          stroke-width="5px"
-          width="32.5"
-          height="32.5"
-        />
-        <rect
-          class="car"
-          x="2.5"
-          y="2.5"
-          fill="#22eeff"
-          stroke-width="5px"
-          width="32.5"
-          height="32.5"
-          pathlength="100"
-        />
-      </svg>
-    </div>
     <div id="root"></div>
-    <!-- <div id="math"></div> -->
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
