@@ -9,7 +9,12 @@ function QuestionCard({ sId, question, optionsList, answer }) {
         <p>
           <span>{sId || "1"}. </span>
           <span>
-            <Latex children={`${question || "What is lorem ipsum?"}`} />
+            <Latex
+              // children={`${question || "What is lorem ipsum?"}`}
+              children={question
+                ?.replaceAll("<math>", "$")
+                ?.replaceAll("</math>", "$")}
+            />
           </span>
         </p>
       </div>

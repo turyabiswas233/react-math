@@ -1,6 +1,6 @@
 import Latex from "react-latex";
 function MathTemplate({ tex, image, options }) {
-  console.log(options);
+  console.table(options);
 
   return (
     <div className="text-xl border-black border-2 p-2 rounded-md m-2 bangla-font">
@@ -11,22 +11,24 @@ function MathTemplate({ tex, image, options }) {
         />
       )}
       <p className="poppins-medium">
-        <Latex children={tex} />
+        <Latex
+          children={tex?.replaceAll("<math>", "$")?.replaceAll("</math>", "$")}
+        />
       </p>
 
       <div className="opt-list my-3">
-        {options?.map((opt, id) => {
+        {/* {options?.map((opt, id) => { 
           return (
             <p
               key={id}
               className="rounded-full px-4 py-2 bg-slate-100 text-slate-950 my-1 hover:bg-slate-200 transition-colors text-base"
             >
               {opt.length > 0 && (
-                <Latex children={`$${optionListKey(id)}\\ ${opt}$`} />
+                <Latex children={`$${optionListKey(id)}\\ ${opt?.value}$`} />
               )}
             </p>
           );
-        })}
+        })} */}
       </div>
     </div>
   );
