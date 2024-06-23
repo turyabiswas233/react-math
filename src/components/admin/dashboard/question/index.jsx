@@ -4,42 +4,32 @@ import { FaImage } from "react-icons/fa";
 import MathTemplate from "./MathTemplate";
 import LatexHint from "./LatexHint";
 import QuestionCard from "./Card";
-import Papa from "papaparse";
+import axios from "axios";
 const subList = [
-  {
-    name: "Physics 1st",
-    link: "#phy_1",
-  },
-  {
-    name: "Physics 2nd",
-    link: "#phy_2",
-  },
-  {
-    name: "Math 1st",
-    link: "#math_1",
-  },
-  {
-    name: "Math 2nd",
-    link: "#math_2",
-  },
-  {
-    name: "Chemistry 1st",
-    link: "#chem_1",
-  },
-  {
-    name: "Chemistry 2nd",
-    link: "#chem_2",
-  },
-  {
-    name: "Biology 1st",
-    link: "#bio_1",
-  },
-  {
-    name: "Biology 2nd",
-    link: "#bio_2",
-  },
+  "Physics 1st Paper",
+  "Physics 2nd Paper",
+  "Chemistry 1st Paper",
+  "Chemistry 2nd Paper",
+  "Math 1st Paper",
+  "Math 2nd Paper",
+  "Biology 1st Paper",
+  "Biology 2nd Paper",
+  "ICT",
+  "Bangla 1st Paper",
+  "Bangla 2nd Paper",
 ];
-const chapters = ["ch1", "ch2", "ch3", "ch4", "ch5", "ch6", "ch7", "ch8"];
+const chapters = [
+  "Chapter 1",
+  "Chapter 2",
+  "Chapter 3",
+  "Chapter 4",
+  "Chapter 5",
+  "Chapter 6",
+  "Chapter 7",
+  "Chapter 8",
+  "Chapter 9",
+  "Chapter 10",
+];
 const exmType = [
   "Du Admission",
   "Engineering",
@@ -56,26 +46,21 @@ function Question() {
     subject: "",
     chapter: "",
     examType: "",
-    options: [
-      { key: 0, value: "" },
-      { key: 1, value: "" },
-      { key: 2, value: "" },
-      { key: 3, value: "" },
-    ],
+    options: ["", "", "", ""],
   });
   const [qLis, setqList] = useState([]);
-  const [options, setOptions] = useState([{ key: 0, value: "" }]);
+
   const [q_img, setimg] = useState(null);
   function handleInfo(e, key) {
     if (e.target.name?.includes("option")) {
-      setQuestion((pre) => ({ ...pre, options: handleOption(e, key) }));
+      handleOption(e, key);
     } else setQuestion((pre) => ({ ...pre, [e.target.name]: e.target.value }));
   }
 
   function handleOption(e, key) {
-    setOptions((pre) => {
-      const upOpt = [...pre];
-      upOpt[key] = { key: key, value: e.target.value };
+    setQuestion((pre) => {
+      const upOpt = { ...pre };
+      upOpt.options[key] = e.target.value;
       return upOpt;
     });
   }
@@ -87,17 +72,43 @@ function Question() {
         <div className="rounded-lg my-5 shadow-md max-w-7xl mx-auto lg:grid grid-cols-1">
           <form
             className="card-body "
-            onSubmit={(e) => {
+            onSubmit={async (e) => {
               e.preventDefault();
-              setqList((pre) => [
-                ...pre,
-                {
-                  ques: questionInfo.qt,
-                  optiList: options,
-                  ans: questionInfo.ans,
-                  image: q_img,
-                },
-              ]);
+              if (
+                questionInfo.qt &&
+                questionInfo.ans &&
+                questionInfo.subject &&
+                questionInfo.chapter
+              )
+                try {
+                  const API_URL = import.meta.env.VITE_DB_URL;
+
+                  axios
+                    .post(
+                      API_URL + "/api/questions",
+                      {
+                        question: { text: questionInfo.qt },
+                        optionsList: questionInfo.options,
+                        answer: { text: questionInfo.ans },
+                        subject: questionInfo.subject,
+                        chapter: questionInfo.chapter,
+                      },
+                      {
+                        headers: {
+                          "Content-Type": "application/json",
+                        },
+                        withCredentials: true,
+                      }
+                    )
+                    .then((res) => {
+                      console.log(res.data);
+                      alert("success");
+                    })
+                    .catch((err) => alert("failed"));
+                } catch (error) {
+                  console.log(error);
+                  alert("failed");
+                }
             }}
           >
             <h2 className="text-left card-title poppins-medium text-3xl">
@@ -117,7 +128,7 @@ function Question() {
                   <MathTemplate
                     tex={`${questionInfo.qt}`}
                     image={q_img}
-                    options={options}
+                    options={questionInfo.options}
                   />
                 )}
                 {/* question image */}
@@ -155,25 +166,29 @@ function Question() {
                         title={"option 1"}
                         placeholder={"option 1"}
                         setValue={(e) => handleOption(e, 0)}
-                        value={options[0]?.value}
+                        name={"options"}
+                        value={questionInfo.options[0]}
                       />
                       <Input
                         title={"option 2"}
                         placeholder={"option 2"}
                         setValue={(e) => handleOption(e, 1)}
-                        value={options[1]?.value}
+                        name={"options"}
+                        value={questionInfo.options[1]}
                       />
                       <Input
                         title={"option 3"}
                         placeholder={"option 3"}
                         setValue={(e) => handleOption(e, 2)}
-                        value={options[2]?.value}
+                        name={"options"}
+                        value={questionInfo.options[2]}
                       />
                       <Input
                         title={"option 4"}
                         placeholder={"option 3"}
                         setValue={(e) => handleOption(e, 3)}
-                        value={options[3]?.value}
+                        name={"options"}
+                        value={questionInfo.options[3]}
                       />
                     </div>
                   </div>
@@ -190,13 +205,13 @@ function Question() {
                       >
                         <option value="">Choose an Option</option>
 
-                        {options?.map((opt, id) => (
+                        {questionInfo.options?.map((opt, id) => (
                           <option
                             className="transition-all hover:text-rose-500"
                             key={id + "_op"}
-                            value={opt.key}
+                            value={opt}
                           >
-                            {opt.value}
+                            {opt}
                           </option>
                         ))}
                       </select>
@@ -215,8 +230,8 @@ function Question() {
                         <option value="">Choose a subject</option>
 
                         {subList.map((sub, id) => (
-                          <option key={id + "_sub"} value={sub.name}>
-                            {sub.name}
+                          <option key={id + "_sub"} value={sub}>
+                            {sub}
                           </option>
                         ))}
                       </select>

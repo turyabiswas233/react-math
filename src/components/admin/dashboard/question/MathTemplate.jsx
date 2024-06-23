@@ -1,7 +1,5 @@
 import Latex from "react-latex";
 function MathTemplate({ tex, image, options }) {
-  console.table(options);
-
   return (
     <div className="text-xl border-black border-2 p-2 rounded-md m-2 bangla-font">
       {image && (
@@ -12,7 +10,9 @@ function MathTemplate({ tex, image, options }) {
       )}
       <p className="poppins-medium">
         <Latex
-          children={tex?.replaceAll("<math>", "$")?.replaceAll("</math>", "$")}
+          children={`${tex
+            ?.replaceAll("<math>", "$")
+            ?.replaceAll("<\\/math>", "$")}`}
         />
       </p>
 

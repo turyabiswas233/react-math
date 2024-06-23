@@ -1,17 +1,11 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
-
-import { auth } from "./firebase.config.js";
-import {
-  createUserWithEmailAndPassword,
-  deleteUser,
-  signInWithEmailAndPassword,
-  updateProfile,
-} from "firebase/auth";
+import mongoose from "mongoose";
+import { router } from "./routes/questions.js";
 
 dotenv.config({
-  path: "config.env",
+  path: [".env"],
 });
 
 const app = express();
@@ -23,16 +17,15 @@ app.use(
 );
 app.use(express.json());
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 5000;
 const APP_SECRET_KEY = process.env.APP_SECRET_KEY;
 const API_ROOT = process.env.API_ROOT;
-function hashPASSKey(password) {
-  const SHA_KEY = process.env.SHA_KEY;
 
-  let newPassword = password + "";
-  newPassword = SHA_KEY + newPassword + SHA_KEY;
-  return newPassword.split("PS")[1];
-}
+// MongoDB connection
+mongoose
+  .connect(process.env.MONGODB_URI)
+  .then(() => console.log("Connected to MongoDB"))
+  .catch((err) => console.error("Could not connect to MongoDB", err));
 
 // user login request
 app.get(`${API_ROOT}/auth`, async (req, res) => {
@@ -70,6 +63,19 @@ app.post(`${API_ROOT}/users/new`, async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`listening port ${PORT}, LINK: http://localhost:${PORT}`);
+app.use("/api/questions", router);
+app.get("/", (req, res) => {
+  res.send("Welcome to the Quiz API!");
 });
+
+app.listen(PORT, () => {
+  console.log(`listening port on http://localhost:${PORT}`);
+});
+
+function hashPASSKey(password) {
+  const SHA_KEY = process.env.SHA_KEY;
+
+  let newPassword = password + "";
+  newPassword = SHA_KEY + newPassword + SHA_KEY;
+  return newPassword.split("PS")[1];
+}

@@ -6,7 +6,7 @@ const LatexHint = () => {
     <div className={`w-full `}>
       <button
         type="button"
-        className="btn btn-success m-5 hidden"
+        className="btn btn-success m-5 "
         onClick={() => setToggle((pre) => !pre)}
       >
         {toggle ? "Hide" : "Show"} Hint
