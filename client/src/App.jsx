@@ -361,7 +361,7 @@ function App() {
           <button
             className="btn btn-success disabled:bg-gray-400 aria-hidden:hidden"
             onClick={() => handleSubmit()}
-            aria-hidden={range.end <= data.length || finish}
+            aria-hidden={range.end < data.length || finish}
             type="submit"
           >
             Finish
