@@ -14,6 +14,7 @@ app.use(
     origin: [process.env.ROOT_URL],
     methods: ["GET", "POST"],
     credentials: true,
+    allowedHeaders: [process.env.ROOT_URL],
   })
 );
 app.use(express.json());

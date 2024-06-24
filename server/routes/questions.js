@@ -18,14 +18,16 @@ router.get("/", async (req, res) => {
       filter.Level = level;
     }
     const SIZE = limit;
-    const questions = await Question.aggregate([
-      { $match: { $where: filter } },
-      {
-        $sample: {
-          size: SIZE,
-        },
-      },
-    ]);
+    console.log(res);
+    const questions = await Question.find(filter).limit(SIZE);
+    // .aggregate([
+    //   { $match: filter },
+    //   {
+    //     $sample: {
+    //       size: SIZE,
+    //     },
+    //   },
+    // ]);
 
     if (questions)
       res

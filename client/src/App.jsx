@@ -109,8 +109,9 @@ function App() {
 
   const fetchQuestion = async () => {
     const API_URL = import.meta.env.VITE_DB_URL;
+    setError("");
+    setLoading(true);
     try {
-      setLoading(true);
       axios
         .get(API_URL + "/api/questions", {
           params: {
@@ -119,6 +120,10 @@ function App() {
             limit: limit,
             level: level,
           },
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
         })
         .then((res) => {
           setdata(res.data?.data);
@@ -126,6 +131,7 @@ function App() {
         })
         .catch((err) => {
           setError(err);
+          setLoading(false);
         });
     } catch (error) {
       alert("Failed");
@@ -280,13 +286,13 @@ function App() {
             setFinish={setFinish}
           />
         )}
-        {data.length > 0 &&
-          !finish &&
-          (loading ? (
-            <div className="scale-150 text-2xl text-center text-blue-400 font-bold">
-              Loading...
-            </div>
-          ) : (
+        {loading ? (
+          <div className="text-2xl text-center text-rose-600 font-bold bg-white shadow-md rounded-md">
+            Loading...
+          </div>
+        ) : (
+          data.length > 0 &&
+          !finish && (
             <div className="space-y-2">
               {level == levels[1] && (
                 <p className="alert alert-info">
@@ -323,7 +329,8 @@ function App() {
                 </div>
               )}
             </div>
-          ))}
+          )
+        )}
       </div>
       {/* page controller */}
       {data.length > 0 && !finish && (
