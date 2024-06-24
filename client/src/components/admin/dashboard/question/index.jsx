@@ -68,7 +68,35 @@ function Question() {
   return (
     <div className="poppins-regular overflow-x-hidden p-10 w-full">
       <h2 className="text-4xl xl:text-5xl poppins-semibold">Question Panel</h2>
-      <div className="main">
+      <form
+        className="w-full hidden"
+        onSubmit={(e) => {
+          e.preventDefault();
+          try {
+            const API_URI = import.meta.env.VITE_DB_URL;
+            axios.post(
+              API_URI + "/api/questions",
+              document.getElementsByName("jsonData").values.toString(),
+              {}
+            );
+          } catch (error) {
+            console.log(error);
+            alert("Error occured");
+          }
+        }}
+      >
+        <textarea
+          className="bg-swhite text-sblack w-full ring p-3 rounded-lg"
+          name="jsonData"
+          id="jsonQ"
+          rows={6}
+          placeholder="paste JSON data"
+        ></textarea>
+        <button type="submit" className="btn btn-primary">
+          Upload
+        </button>
+      </form>
+      <div className="main grayscale  pointer-events-none opacity-50">
         <div className="rounded-lg my-5 shadow-md max-w-7xl mx-auto lg:grid grid-cols-1">
           <form
             className="card-body "

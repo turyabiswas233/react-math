@@ -17,14 +17,24 @@ router.get("/", async (req, res) => {
     if (level) {
       filter.Level = level;
     }
+    const SIZE = limit;
+    const questions = await Question.aggregate([
+      { $match: { $where: filter } },
+      {
+        $sample: {
+          size: SIZE,
+        },
+      },
+    ]);
 
-    const questions = await Question.find(filter)
-    .limit(limit || 25);
-    res
-      .status(201)
-      .json({ data: questions, message: "question fetched successfully" });
+    if (questions)
+      res
+        .status(201)
+        .json({ data: questions, message: "question fetched successfully" });
+    else res.status(203).json({ data: [], message: "No question found" });
   } catch (err) {
     res.status(500).json({ message: err.message });
+    console.log(err);
   }
 });
 
@@ -34,7 +44,7 @@ router.post("/answer", async (req, res) => {
   try {
     const question = await Question.findById(questionId);
     if (question) {
-      const isCorrect = question.answer === selectedOption;
+      const isCorrect = question.Answer === selectedOption;
       res.json({ isCorrect });
     } else {
       res.status(404).json({ error: "Question not found" });

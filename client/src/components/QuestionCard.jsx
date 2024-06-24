@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 import Latex from "react-latex";
-
+import { levels } from "../App";
 function QuestionCard({
   sId,
   question,
+  qImg,
   optionsList,
   answer,
   Answer_img,
@@ -11,19 +12,17 @@ function QuestionCard({
   stdAnswer,
   board,
   solve,
+  showSolve,
+  level,
 }) {
-  const [toggleSolve, setSolve] = useState(false);
-
-  function hasMatchingBlock(x, y, z) {
-    if (z) return y.includes(z);
-    else return y?.includes(x?.replaceAll("<math>", ""));
-  }
-
   return (
-    <div className="w-full bg-sblack text-swhite rounded-lg bangla-font backdrop-blur-md p-3">
+    <div className="w-full max-w-3xl mx-auto text-sblack bg-swhite border shadow-md rounded-lg bangla-font backdrop-blur-md p-3 overflow-x-auto">
       {/* question title */}
       <div id="question_header" className="text-xl my-2 p-2">
         {sId + 1 + ".\t"}
+        {qImg && (
+          <img className="aspect-auto object-cover" src={qImg} width={300} />
+        )}
         <span className="break-words">
           <Latex fleqn={true} leqno={true} errorColor="red">
             {question
@@ -36,34 +35,53 @@ function QuestionCard({
               ?.replaceAll(`\s`, "s")}
           </Latex>
         </span>
-        <p className="my-2 text-sm text-right">{board}</p>
+        <p className="my-2 text-sm text-right">
+          {board}
+          {showSolve && stdAnswer?.ans != undefined && (
+            <span
+              className={`${
+                stdAnswer?.ans?.includes(
+                  answer ? answer?.trim() : Answer_img?.trim()
+                )
+                  ? "text-green-500"
+                  : "text-rose-500"
+              } uppercase block`}
+            >
+              {stdAnswer?.ans?.includes(
+                answer ? answer?.trim() : Answer_img?.trim()
+              )
+                ? "Correct"
+                : "Wrong"}
+            </span>
+          )}
+          {showSolve && stdAnswer?.ans == undefined && (
+            <span className={` uppercase block`}>skipped</span>
+          )}
+        </p>
       </div>
       {/* question options */}
-      <div id="options" className="grid justify-normal space-y-2 px-3 my-2">
+      <div
+        id="options"
+        className="grid justify-normal space-y-2 px-3 my-2 aria-disabled:pointer-events-none"
+        aria-disabled={showSolve}
+      >
         {optionsList?.length > 0 &&
+          level == levels[0] &&
           optionsList?.map((opt, oid) => {
             let optId = oid == 0 ? "ক" : oid == 1 ? "খ" : oid == 2 ? "গ" : "ঘ";
+
             return (
               <div
                 key={`q_op_${oid + 1}`}
-                className={`transition text-white rounded-md h-fit p-2 group hover:cursor-pointer ${
-                  !stdAnswer?.ans
-                    ? "bg-stone-800 hover:bg-slate-800/60"
-                    : stdAnswer.oid === oid
-                    ? hasMatchingBlock(answer, stdAnswer.ans, Answer_img)
-                      ? "bg-green-500"
-                      : "bg-rose-500"
-                    : "bg-stone-800 hover:bg-slate-800/60"
+                className={`transition  rounded-md h-fit p-2 group hover:cursor-pointer ${
+                  stdAnswer?.ans && stdAnswer.oid === oid
+                    ? "bg-syellow/80 text-sblack"
+                    : "bg-sblack hover:bg-sblack/60 text-swhite"
                 }`}
                 onClick={() => handleAnswer(opt, sId, oid)}
               >
                 <p className="flex gap-3">
-                  <span
-                    className="text-lg w-4 h-4 flex justify-center items-center p-3 ring-2 ring-blue-500 rounded-full transition "
-                    hidden={!opt?.includes("http") ? true : false}
-                  >
-                    {optId}
-                  </span>
+                  {optId + "."}
                   <span className="font-semibold">
                     {opt?.includes("http") ? (
                       <img
@@ -96,12 +114,12 @@ function QuestionCard({
           })}
       </div>
       {/* question answer */}
-      <div id="question_answer">
-        <p
-          className={`bg-green-900/80 m-3 rounded-md ring-1 ring-green-400 p-2 text-white font-bold ${
-            !stdAnswer?.ans && "hidden"
-          }`}
-        >
+      <div
+        id="question_answer"
+        className="aria-hidden:hidden bg-green-900/80 m-3 rounded-md ring-1 ring-green-400 p-2 text-white"
+        aria-hidden={!showSolve}
+      >
+        <p className={` font-bold ${!stdAnswer?.ans && "hidden"}`}>
           Answer:
           {answer && (
             <Latex
@@ -120,47 +138,53 @@ function QuestionCard({
                 ?.replaceAll(`\l`, "l")}
             />
           )}
-          {Answer_img && <img src={Answer_img} width={250} height={250} />}
+          {Answer_img && (
+            <img
+              className="bg-swhite rounded-md"
+              src={Answer_img}
+              width={250}
+              height={250}
+            />
+          )}
         </p>
-      </div>
-
-      {/* solution */}
-      <div className="ring-2 ring-green-400 bg-green-900/50 mt-3 p-2 rounded-md">
-        <button
-          className="btn btn-primary btn-block mb-3"
-          onClick={() => setSolve((pre) => !pre)}
+        {/* solution */}
+        <div
+          className="mt-3 rounded-md aria-hidden:hidden grid"
+          aria-hidden={!showSolve}
         >
-          Solve: ➡️
-        </button>
-        {solve?.txt && toggleSolve && (
-          <span className="break-words">
-            <Latex
-              displayMode={true}
-              fleqn={true}
-              leqno={true}
-              errorColor="red"
-            >
-              {solve?.txt
-                ?.replaceAll("<math>", "$")
-                ?.replaceAll("</math>", "$")
-                ?.replaceAll("\t", " \\t")
-                ?.replaceAll("\f", " \\f")
-                ?.replaceAll("\r", " \\r")
-                ?.replaceAll(`\s`, "s")}
-            </Latex>
-          </span>
-        )}
-        {solve?.img && toggleSolve && (
-          <img
-            className="object-contain bg-white rounded-md"
-            src={solve?.img}
-            width={250}
-            height={250}
-            onClick={() => {
-              window.open(solve?.img);
-            }}
-          />
-        )}
+          <p>
+            <u>Solve:</u>
+          </p>
+          {solve?.txt && (
+            <span className="break-words p-2">
+              <Latex
+                displayMode={true}
+                fleqn={true}
+                leqno={true}
+                errorColor="red"
+              >
+                {solve?.txt
+                  ?.replaceAll("<math>", "$")
+                  ?.replaceAll("</math>", "$")
+                  ?.replaceAll("\t", " \\t")
+                  ?.replaceAll("\f", " \\f")
+                  ?.replaceAll("\r", " \\r")
+                  ?.replaceAll(`\s`, "s")}
+              </Latex>
+            </span>
+          )}
+          {solve?.img && (
+            <img
+              className="object-contain bg-white rounded-md"
+              src={solve?.img}
+              width={250}
+              height={250}
+              onClick={() => {
+                window.open(solve?.img);
+              }}
+            />
+          )}
+        </div>
       </div>
     </div>
   );
